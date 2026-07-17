@@ -1,35 +1,27 @@
-import { GoogleGenAI } from "@google/genai";
+import { askGemini } from "../services/gemini.service.js";
+import { successResponse, errorResponse } from "../utils/response.js";
 
 export const chat = async (req, res) => {
 
     try {
 
-        console.log("API:", process.env.GEMINI_API_KEY);
-
-        const ai = new GoogleGenAI({
-            apiKey: process.env.GEMINI_API_KEY,
-        });
-
         const { message } = req.body;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: message,
-        });
+        const reply = await askGemini(message);
 
-        res.json({
-            success: true,
-            reply: response.text,
-        });
+        res.json(
+            successResponse({
+                reply
+            })
+        );
 
     } catch (err) {
 
         console.error(err);
 
-        res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+        res.status(500).json(
+            errorResponse(err.message)
+        );
 
     }
 

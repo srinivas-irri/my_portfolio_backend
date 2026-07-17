@@ -1,24 +1,18 @@
 import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-});
+import { buildPrompt } from "./prompt.service.js";
 
 export async function askGemini(question) {
 
-    try {
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
+    });
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: question,
-        });
+    const prompt = buildPrompt(question);
 
-        return response.text;
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+    });
 
-    } catch (error) {
-
-        console.error(error);
-
-        throw error;
-    }
+    return response.text;
 }

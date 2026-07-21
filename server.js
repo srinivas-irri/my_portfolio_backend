@@ -1,46 +1,37 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import chatRoutes from "./routes/chat.routes.js";
 
 dotenv.config();
 
 const app = express();
 
-// app.use(cors());
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://portfolio-kappa-three-e36msqmj1f.vercel.app"
-    ],
-    methods: ["GET", "POST"],
-    credentials: true
-}));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://portfolio-kappa-three-e36msqmj1f.vercel.app",
+  "https://www.srinu.online",
+  "https://srinu.online"
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
+// Remove app.options("*", cors());
+
 app.use(express.json());
 
 app.use("/api/chat", chatRoutes);
-
-// Root route
-app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "🚀 Srinivas AI Portfolio Backend is Running"
-    });
-});
-
-// Health check route
-app.get("/health", (req, res) => {
-    res.json({
-        status: "ok",
-        timestamp: new Date().toISOString()
-    });
-});
-
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-    // console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`🚀 Server running on port ${PORT}`);
-});
-

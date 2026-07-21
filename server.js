@@ -12,8 +12,10 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://portfolio-kappa-three-e36msqmj1f.vercel.app/"
-    ]
+        "https://portfolio-kappa-three-e36msqmj1f.vercel.app"
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
 }));
 app.use(express.json());
 
@@ -29,6 +31,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    // console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
 

@@ -21,10 +21,19 @@ app.use(express.json());
 
 app.use("/api/chat", chatRoutes);
 
+// Root route
 app.get("/", (req, res) => {
     res.json({
         success: true,
         message: "🚀 Srinivas AI Portfolio Backend is Running"
+    });
+});
+
+// Health check route
+app.get("/health", (req, res) => {
+    res.json({
+        status: "ok",
+        timestamp: new Date().toISOString()
     });
 });
 

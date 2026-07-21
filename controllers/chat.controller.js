@@ -1,28 +1,72 @@
+import { match } from "../matcher/matcher.js";
+import { aiReply } from "../services/ai.service.js";
 import { askGemini } from "../services/gemini.service.js";
-import { successResponse, errorResponse } from "../utils/response.js";
 
 export const chat = async (req, res) => {
 
+    const { message } = req.body;
+
     try {
 
-        const { message } = req.body;
+    console.log("Incoming message:", message);
 
-        const reply = await askGemini(message);
+    const result = match(message);
 
-        res.json(
-            successResponse({
-                reply
-            })
-        );
+    console.log("Matched:", result);
 
-    } catch (err) {
+    if (result) {
 
-        console.error(err);
+        console.log("Manual response");
 
-        res.status(500).json(
-            errorResponse(err.message)
-        );
+        return res.json({
+
+            success: true,
+
+            source: "manual",
+
+            data: aiReply(result)
+
+        });
 
     }
+
+    console.log("Calling Gemini...");
+
+    const reply = await askGemini(message);
+
+    console.log("Gemini Reply:", reply);
+
+    const matched = match(message);
+
+    console.log("Matched After Gemini:", matched);
+
+    return res.json({
+
+        success: true,
+
+        source: "gemini",
+
+        reply,
+
+        action: matched ? aiReply(matched).action : null
+
+    });
+
+}
+catch (err) {
+
+    console.error("BACKEND ERROR:");
+
+    console.error(err);
+
+    return res.status(500).json({
+
+        success: false,
+
+        message: err.message
+
+    });
+
+}
 
 };

@@ -8,7 +8,13 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://portfolio-kappa-three-e36msqmj1f.vercel.app/"
+    ]
+}));
 app.use(express.json());
 
 app.use("/api/chat", chatRoutes);

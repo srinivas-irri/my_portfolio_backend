@@ -2,11 +2,9 @@ export function aiReply(result) {
 
     switch (result.type) {
 
-       case "projects": {
+      case "projects": {
 
-            const projects = result.data.map((project, index) =>
-
-            `
+    const projects = result.data.map(project => `
             ${project.title}
 
             ${project.description}
@@ -15,23 +13,23 @@ export function aiReply(result) {
 
             ${project.live}
 
-            ------------------------------------------`
+            ------------------------------------------
+                `).join("\n\n");
 
-            ).join("\n\n");
+                const speakProjects = result.data.map(project =>
+                    `${project.title}. ${project.description}. Technologies used: ${project.tech.join(", ")}.`
+                ).join(" ");
 
-            return {
+                return {
+                    action: "works",
 
-                action: "works",
+                    // Chatbot
+                    reply: projects,
 
-                // Chatbot
-                reply: projects,
-
-                // Voice Assistant
-                speak: "I've moved to the Projects section. Here you can explore Srinivas's major projects."
-
-            };
-
-        }
+                    // Voice Assistant
+                    speak: speakProjects
+                };
+            }
 
         case "skills": {
 
